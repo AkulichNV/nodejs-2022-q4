@@ -14,25 +14,25 @@ const parseInput = (input) => {
   return args;
 };
 
-const isExist = async (path) => {
+const isExist = async (dir) => {
   try {
-    await fs.access(path);
+    await fs.access(dir);
     return true;
   } catch (error) {
     return false;
   }
 };
 
-const checkThatExist = async (path) => {
+const checkThatExist = async (dir) => {
   try {
-    return await fs.stat(path);
+    return await fs.stat(dir);
   } catch (err) {
     throw new Error();
   }
 };
 
-const checkThatNotExist = async (path) => {
-  const isFileExist = await isExist(path);
+const checkThatNotExist = async (dir) => {
+  const isFileExist = await isExist(dir);
   if (isFileExist) {
     throw new Error();
   }
@@ -43,17 +43,15 @@ const isPathToFile = (filename) => {
   return !dirMarkerRegExp.test(filename);
 };
 
-const checkIsNotFile = async (path) => {
-  const pathStat = await checkThatExist(path);
+const checkIsNotFile = async (dir) => {
+  const pathStat = await checkThatExist(dir);
   const isFile = pathStat.isFile();
   if (isFile) {
     throw new Error();
   }
 };
 
-const getDirFromPath = (filePath) => {
-  return path.parse(filePath).dir;
-};
+const getDirFromPath = (filePath) => path.parse(filePath).dir;
 
 module.exports = {
   parseInput,

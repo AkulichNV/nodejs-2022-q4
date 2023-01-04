@@ -50,8 +50,8 @@ class App {
   //   await commands.nwd.ls(this.currentPath);
   // }
 
-  async ls() {
-    const dirList = await fsProm.readdir(this.currentPath, { withFileTypes: true });
+  ls() {
+    const dirList = fs.readdirSync(this.currentPath, { withFileTypes: true });
     // eslint-disable-next-line max-len
     const sortedDirList = dirList.sort((a, b) => a.isFile() - b.isFile()).filter((item) => !item.isSymbolicLink());
     const result = sortedDirList.map((el) => ({ Name: el.name, Type: el.isFile() ? 'file' : 'directory' }));
@@ -59,9 +59,27 @@ class App {
     console.table(result);
   }
 
-  async cat(args) {
+  // async cat(args) {
+  //   const pathToFile = this.resolvePath(args[0]);
+  //   await commands.files.cat(pathToFile);
+  // }
+
+  cat(args) {
     const pathToFile = this.resolvePath(args[0]);
-    await commands.files.cat(pathToFile);
+    this.asynCat(pathToFile)
+      .then((data) => console.log(data))
+      .catch((reason) => console.log(`Message:${reason.message}`));
+    console.log(3);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async asynCat(pathToFile) {
+    // const pathToFile = this.resolvePath(args[0]);
+    console.log(1);
+    const readable = await fs.createReadStream(pathToFile, 'utf-8');
+    const data = await readable.pipe(process.stdout);
+    console.log(2);
+    return data;
   }
 
   async add(args) {
@@ -170,7 +188,7 @@ class App {
       output: process.stdout,
     });
 
-    const recursiveAsyncReadLine = () => {
+    const recursiveAsyncReadLine = async () => {
       console.log(`You are currently in ${this.currentPath}!`);
       rl.question('>: ', (input) => {
         const operands = input.split(' ');
@@ -209,7 +227,7 @@ class App {
       //   }
       // }
     };
-    recursiveAsyncReadLine();
+    await recursiveAsyncReadLine();
   }
 }
 

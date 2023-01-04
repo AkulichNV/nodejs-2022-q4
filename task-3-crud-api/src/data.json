@@ -1,0 +1,8 @@
+[
+  {
+    "id": 1,
+    "username": "Nat",
+    "age": 30,
+    "hobbies": ["hobby 1", "hobby 2"]
+  }
+]

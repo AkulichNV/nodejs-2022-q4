@@ -1,0 +1,22 @@
+{
+  "name": "task-3-crud-api",
+  "version": "1.0.0",
+  "description": "implement simple CRUD API using in-memory database underneath",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git"
+  },
+  "author": "AkulichNV",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3"
+  }
+}

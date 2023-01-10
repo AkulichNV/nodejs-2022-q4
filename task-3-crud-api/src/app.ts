@@ -9,7 +9,6 @@ const data = fs.readFileSync(path.resolve(__dirname,'./data.json'));
 let users = JSON.parse(data);
 
 const requestHandler = (req, res) => {
-    // const url = req.url;
     const method = req.method;
     const urlparse = url.parse(req.url, true);
     const userId = urlparse.pathname.split('/')[3];
@@ -21,10 +20,10 @@ const requestHandler = (req, res) => {
   else if(urlparse.pathname === `/api/users/${userId}` && method === 'GET') {
     const isId = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(userId);
     if(isId) {
-        const result = users.find((item) => item.id === userId);
-        if(result){
+        const existId = Object.keys(users).find((item) => item === userId);
+        if(existId){
             res.writeHead(200, {'Content-Type': 'application/json'});
-            return res.end(JSON.stringify(result, null, 2));
+            return res.end(JSON.stringify(users[existId], null, 2));
         } else {
             const message = { message: 'your id doesn\'t exist' };
 
@@ -86,18 +85,8 @@ const requestHandler = (req, res) => {
     //TODO: DELETE logic
   } else {
     res.writeHead(404);
-    console.log('404');
-    res.end();
-    
+    res.end(); 
   }
-
-//   res.setHeader('Content-Type', 'text/html');
-//   res.write('<html>');
-//   res.write('<head><title>My First Page</title><head>');
-//   res.write('<body><h1>Hello from my Node.js Server!</h1></body>');
-//   res.write('</html>');
-//   res.end();
-
 };
 
 exports.handler = requestHandler;

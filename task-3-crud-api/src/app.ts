@@ -2,6 +2,7 @@ const fs = require('fs');
 const url = require('url');
 // const querystring = require('querystring');
 const path = require("path");
+const { v4: uuidv4 } = require('uuid');
 
 // const file = fs.readFileSync(path.resolve(__dirname, "../data/compSciCourses.json"));
 const data = fs.readFileSync(path.resolve(__dirname,'./data.json'));
@@ -17,7 +18,7 @@ const requestHandler = (req, res) => {
     res.writeHead(200, {'Content-Type': 'application/json'});
     return res.end(JSON.stringify(users, null, 2));
   }
-  if(urlparse.pathname === `/api/users/${userId}` && method === 'GET') {
+  else if(urlparse.pathname === `/api/users/${userId}` && method === 'GET') {
     const isId = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(userId);
     if(isId) {
         const result = users.find((item) => item.id === userId);
@@ -36,24 +37,58 @@ const requestHandler = (req, res) => {
       res.writeHead(400, {'Content-Type': 'application/json'});
       return res.end(JSON.stringify(message, null, 2));
   }
-  if(urlparse.pathname == '/users' && method == 'POST')
-  {
-    //TODO: POST logic
+  else if(urlparse.pathname === '/api/users' && method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {    
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+        const id = uuidv4();
+
+        const jsonData = JSON.parse(body);
+        const username = jsonData.username;
+        const age = jsonData.age;
+        const hobbies = jsonData.hobbies;
+
+        const usernameExist = Object.keys(users).find(key => users[key].username === username);
+
+        if (username && age && hobbies) {
+          if(usernameExist) {
+            const message = { message: 'this username already exist!' };
+            res.writeHead(400, {'Content-Type': 'application/json'});
+            return res.end(JSON.stringify(message, null, 2));
+          } 
+
+          users[id] = { username, age, hobbies };
+          fs.writeFile('src/data.json', JSON.stringify(users), (err) => {            
+            if (err) {
+              const message = { message: 'could not persist data!' };
+              res.writeHead(400, {'Content-Type': 'application/json'});
+              return res.end(JSON.stringify(message, null, 2));
+            } 
+            res.writeHead(201, {'Content-Type': 'application/json'});
+            return res.end(JSON.stringify(users, null, 2));
+          });
+        } else {
+          const message = { message: 'request body does not contain required fields' };
+      
+          res.writeHead(400, {'Content-Type': 'application/json'});
+          return res.end(JSON.stringify(message, null, 2));
+        }
+      });
   }
-  if(url.pathname == '/users/tasks' && method == 'POST')
-  {
-    //TODO: POST logic
-  }
-  if(url.pathname == '/users' && method == 'PUT')
+  else if(url.pathname === '/api/users' && method === 'PUT')
   {
     //TODO: PUT logic
   }
-  if(url.pathname == '/users' && method == 'DELETE')
+  else if(url.pathname === '/api/users' && method === 'DELETE')
   {
     //TODO: DELETE logic
   } else {
     res.writeHead(404);
+    console.log('404');
     res.end();
+    
   }
 
 //   res.setHeader('Content-Type', 'text/html');

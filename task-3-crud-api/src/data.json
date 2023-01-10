@@ -1,8 +1,1 @@
-[
-  {
-    "id": "e5edb192-1971-4393-a516-ba10fac75d14",
-    "username": "Nat",
-    "age": 30,
-    "hobbies": ["hobby 1", "hobby 2"]
-  }
-]
+{"e5edb192-1971-4393-a516-ba10fac75d14":{"username":"Nat","age":30,"hobbies":["hobby 1","hobby 2"]},"13638793-ed5d-43dd-80fa-1155730f1f1d":{"username":"Sasha","age":30,"hobbies":["children","sailing"]},"dd059ef2-39c0-4105-b4d7-a3398ff92b55":{"username":"Sasha","age":30,"hobbies":["children","sailing"]},"9a0b3621-78de-4bc8-8151-f43bbc6f64af":{"username":"Sasha","age":30,"hobbies":["children","sailing"]},"220655f8-feee-4320-9660-bf9128614348":{"username":"Sasha","age":30,"hobbies":["children","sailing"]},"2bd92519-48ef-4d10-a87b-1b4511db12bc":{"username":"Sasha","age":30,"hobbies":["children","sailing"]},"1a398c4b-1bc5-43fd-874f-8a3ea4a77687":{"username":"Sasha","age":30,"hobbies":["children","sailing"]},"8e255b76-eeba-4c40-99e5-1d8d773b0ca3":{"username":"Sasha","age":30,"hobbies":["children","sailing"]}}

@@ -12,6 +12,9 @@ const requestHandler = (req, res) => {
     const method = req.method;
     const urlparse = url.parse(req.url, true);
     const userId = urlparse.pathname.split('/')[3];
+
+    // console.log(urlparse.pathname);
+    // console.log(method);
   
   if(urlparse.pathname === '/api/users' && method === 'GET') {
     res.writeHead(200, {'Content-Type': 'application/json'});
@@ -76,15 +79,54 @@ const requestHandler = (req, res) => {
         }
       });
   }
-  else if(url.pathname === '/api/users' && method === 'PUT')
-  {
-    //TODO: PUT logic
+  else if(urlparse.pathname === `/api/users/${userId}` && method === 'PUT') {
+    const isId = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(userId);
+    if(isId) {
+        const existId = Object.keys(users).find((item) => item === userId);
+        if(existId){
+            let body = '';
+
+            req.on('data', chunk => {    
+            body += chunk.toString();
+            });
+
+            req.on('end', () => {
+                const id = uuidv4();
+        
+                const jsonData = JSON.parse(body);
+                const username = jsonData.username;
+                const age = jsonData.age;
+                const hobbies = jsonData.hobbies;
+
+                users[userId] = { username, age, hobbies };
+
+                fs.writeFile('src/data.json', JSON.stringify(users), (err) => {            
+                    if (err) {
+                      const message = { message: 'could not persist data!' };
+                      res.writeHead(400, {'Content-Type': 'application/json'});
+                      return res.end(JSON.stringify(message, null, 2));
+                    } 
+                    res.writeHead(200, {'Content-Type': 'application/json'});
+                    return res.end(JSON.stringify(users, null, 2));
+                })
+            })
+        } else {
+            const message = { message: 'your id doesn\'t exist' };
+            res.writeHead(404, {'Content-Type': 'application/json'});
+            return res.end(JSON.stringify(message, null, 2));
+        }
+    } else {
+      const message = { message: 'your id is invalid (not uuid)' };
+      res.writeHead(400, {'Content-Type': 'application/json'});
+      return res.end(JSON.stringify(message, null, 2));
+    }
   }
   else if(url.pathname === '/api/users' && method === 'DELETE')
   {
     //TODO: DELETE logic
   } else {
     res.writeHead(404);
+    console.log('404');
     res.end(); 
   }
 };

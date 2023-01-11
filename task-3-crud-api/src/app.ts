@@ -121,9 +121,31 @@ const requestHandler = (req, res) => {
       return res.end(JSON.stringify(message, null, 2));
     }
   }
-  else if(url.pathname === '/api/users' && method === 'DELETE')
-  {
-    //TODO: DELETE logic
+  else if(urlparse.pathname === `/api/users/${userId}` && method === 'DELETE') {
+    const isId = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(userId);
+    if(isId) {
+        const existId = Object.keys(users).find((item) => item === userId);
+        if(existId){
+            delete users[userId];
+            fs.writeFile('src/data.json', JSON.stringify(users), (err) => {            
+                if (err) {
+                  const message = { message: 'could not persist data!' };
+                  res.writeHead(400, {'Content-Type': 'application/json'});
+                  return res.end(JSON.stringify(message, null, 2));
+                } 
+                res.writeHead(204, {'Content-Type': 'application/json'});
+                return res.end();
+            })
+        } else {
+            const message = { message: 'your id doesn\'t exist' };
+            res.writeHead(404, {'Content-Type': 'application/json'});
+            return res.end(JSON.stringify(message, null, 2));
+        }
+    } else {
+      const message = { message: 'your id is invalid (not uuid)' };
+      res.writeHead(400, {'Content-Type': 'application/json'});
+      return res.end(JSON.stringify(message, null, 2));
+    }
   } else {
     res.writeHead(404);
     console.log('404');

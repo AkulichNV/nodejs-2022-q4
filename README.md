@@ -82,4 +82,3 @@ If everything OK, on console appear `webpack 5.75.0 compiled successfully in ...
      * **400** - id is not valid or request body
      
      * **404** - user is not found
-
